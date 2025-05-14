@@ -22,7 +22,7 @@ public class ProductServiceImpl implements IProductService {
     @Override
     public Product getSingleProduct(long prodId) {
         ResponseEntity<FakeStoreDTO> responseEntity=applicationConfig.getRestTemplate().getForEntity("https://fakestoreapi.com/products/"+prodId,FakeStoreDTO.class);
-        return converterToProduct(responseEntity.getBody(),prodId);
+        return converterToProduct(responseEntity.getBody());
     }
 
     @Override
@@ -32,17 +32,17 @@ public class ProductServiceImpl implements IProductService {
         FakeStoreDTO[] fakeStoreDTOs = responseEntity.getBody();
         List<Product> products = new ArrayList<>();
         for(FakeStoreDTO fakeStoreDto : fakeStoreDTOs){
-            products.add(converterToProduct(fakeStoreDto,products.size()));
+            products.add(converterToProduct(fakeStoreDto));
         }
         return products;
     }
 
 
-    private Product converterToProduct(FakeStoreDTO fakeStoreDTO,long prodId) {
+    private Product converterToProduct(FakeStoreDTO fakeStoreDTO) {
         Product product = new Product();
         Category category = new Category();
         category.setTitle(fakeStoreDTO.getCategory());
-        product.setId(prodId);
+        product.setId(fakeStoreDTO.getId());
         product.setTitle(fakeStoreDTO.getTitle());
         product.setDescription(fakeStoreDTO.getDescription());
         product.setPrice(fakeStoreDTO.getPrice());
