@@ -10,6 +10,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Service
 public class ProductServiceImpl implements IProductService {
 
@@ -21,6 +24,19 @@ public class ProductServiceImpl implements IProductService {
         ResponseEntity<FakeStoreDTO> responseEntity=applicationConfig.getRestTemplate().getForEntity("https://fakestoreapi.com/products/"+prodId,FakeStoreDTO.class);
         return converterToProduct(responseEntity.getBody(),prodId);
     }
+
+    @Override
+    public List<Product> getAllProducts() {
+        RestTemplate restTemplate = applicationConfig.getRestTemplate();
+        ResponseEntity<FakeStoreDTO[]> responseEntity = restTemplate.getForEntity("https://fakestoreapi.com/products", FakeStoreDTO[].class);
+        FakeStoreDTO[] fakeStoreDTOs = responseEntity.getBody();
+        List<Product> products = new ArrayList<>();
+        for(FakeStoreDTO fakeStoreDto : fakeStoreDTOs){
+            products.add(converterToProduct(fakeStoreDto,products.size()));
+        }
+        return products;
+    }
+
 
     private Product converterToProduct(FakeStoreDTO fakeStoreDTO,long prodId) {
         Product product = new Product();
